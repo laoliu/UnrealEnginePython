@@ -3,8 +3,8 @@
 
 #if WITH_EDITOR
 
-#include "AssetRegistryModule.h"
-#include "Runtime/AssetRegistry/Public/ARFilter.h"
+#include "Runtime/AssetRegistry/Public/AssetRegistry/AssetRegistryModule.h"
+#include "Runtime/CoreUObject/Public/AssetRegistry/ARFilter.h"
 
 typedef struct
 {

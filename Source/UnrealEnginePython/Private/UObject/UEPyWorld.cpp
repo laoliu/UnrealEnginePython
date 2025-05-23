@@ -175,6 +175,41 @@ PyObject *py_ue_find_object(ue_PyUObject *self, PyObject * args)
 	Py_RETURN_UOBJECT(u_object);
 }
 
+PyObject* py_ue_find_all_objects(ue_PyUObject* self, PyObject* args)
+{
+
+	ue_py_check(self);
+
+	char* name;
+	if (!PyArg_ParseTuple(args, "s:find_all_object", &name))
+	{
+		return NULL;
+	}
+
+	UWorld* world = ue_get_uworld(self);
+	if (!world)
+		return PyErr_Format(PyExc_Exception, "unable to retrieve UWorld from uobject");
+
+	PyObject* ret = PyList_New(0);
+
+	for (TObjectIterator<UObject> Itr; Itr; ++Itr)
+	{
+		UObject* u_obj = *Itr;
+		if (u_obj->GetWorld() != world)
+			continue;
+		ue_PyUObject* py_obj = ue_get_python_uobject(u_obj);
+		if (!py_obj)
+			continue;
+		UClass* FindClass = u_obj->GetClass();
+		FTopLevelAssetPath AssetPath = FindClass->GetClassPathName();
+		if (AssetPath.GetAssetName() == name)
+			PyList_Append(ret, (PyObject*)py_obj);
+	}
+
+
+	return ret;
+}
+
 PyObject *py_ue_get_world(ue_PyUObject *self, PyObject * args)
 {
 
@@ -216,6 +251,32 @@ PyObject *py_ue_has_world(ue_PyUObject *self, PyObject * args)
 	Py_RETURN_FALSE;
 }
 
+
+PyObject* py_ue_get_view_target(ue_PyUObject* self, PyObject* args)
+{
+
+	ue_py_check(self);
+
+	UWorld* world = ue_get_uworld(self);
+	if (!world)
+		return PyErr_Format(PyExc_Exception, "unable to retrieve UWorld from uobject");
+
+	int controller_id = 0;
+	if (!PyArg_ParseTuple(args, "i:get_view_target", &controller_id))
+	{
+		return NULL;
+	}
+
+	APlayerController* controller = UGameplayStatics::GetPlayerController(world, controller_id);
+	if (!controller)
+		return PyErr_Format(PyExc_Exception, "unable to retrieve controller %d", controller_id);
+
+	AActor* actor = controller->GetViewTarget();
+
+	Py_RETURN_UOBJECT(actor);
+
+}
+
 PyObject *py_ue_set_view_target(ue_PyUObject * self, PyObject * args)
 {
 
@@ -248,6 +309,38 @@ PyObject *py_ue_set_view_target(ue_PyUObject * self, PyObject * args)
 
 }
 
+PyObject* py_ue_set_view_target_with_blend(ue_PyUObject* self, PyObject* args)
+{
+
+	ue_py_check(self);
+
+	UWorld* world = ue_get_uworld(self);
+	if (!world)
+		return PyErr_Format(PyExc_Exception, "unable to retrieve UWorld from uobject");
+
+	PyObject* py_obj;
+	int controller_id = 0;
+	int blend_time = 0;
+	if (!PyArg_ParseTuple(args, "O|i|i:set_view_target_with_blend", &py_obj, &controller_id, &blend_time))
+	{
+		return NULL;
+	}
+
+	AActor* actor = ue_py_check_type<AActor>(py_obj);
+	if (!actor)
+	{
+		return PyErr_Format(PyExc_Exception, "argument is not an actor");
+	}
+
+	APlayerController* controller = UGameplayStatics::GetPlayerController(world, controller_id);
+	if (!controller)
+		return PyErr_Format(PyExc_Exception, "unable to retrieve controller %d", controller_id);
+
+	controller->SetViewTargetWithBlend(actor, blend_time);
+
+	Py_RETURN_NONE;
+
+}
 PyObject *py_ue_get_world_delta_seconds(ue_PyUObject * self, PyObject * args)
 {
 
@@ -349,9 +442,6 @@ PyObject *py_ue_world_create_folder(ue_PyUObject *self, PyObject * args)
 	if (!PyArg_ParseTuple(args, "s:world_create_folder", &path))
 		return nullptr;
 
-	if (!FActorFolders::IsAvailable())
-		return PyErr_Format(PyExc_Exception, "FActorFolders is not available");
-
 	UWorld *world = ue_get_uworld(self);
 	if (!world)
 		return PyErr_Format(PyExc_Exception, "unable to retrieve UWorld from uobject");
@@ -371,9 +461,6 @@ PyObject *py_ue_world_delete_folder(ue_PyUObject *self, PyObject * args)
 	char *path;
 	if (!PyArg_ParseTuple(args, "s:world_delete_folder", &path))
 		return nullptr;
-
-	if (!FActorFolders::IsAvailable())
-		return PyErr_Format(PyExc_Exception, "FActorFolders is not available");
 
 	UWorld *world = ue_get_uworld(self);
 	if (!world)
@@ -396,9 +483,6 @@ PyObject *py_ue_world_rename_folder(ue_PyUObject *self, PyObject * args)
 	if (!PyArg_ParseTuple(args, "ss:world_rename_folder", &path, &new_path))
 		return nullptr;
 
-	if (!FActorFolders::IsAvailable())
-		return PyErr_Format(PyExc_Exception, "FActorFolders is not available");
-
 	UWorld *world = ue_get_uworld(self);
 	if (!world)
 		return PyErr_Format(PyExc_Exception, "unable to retrieve UWorld from uobject");
@@ -416,9 +500,6 @@ PyObject *py_ue_world_folders(ue_PyUObject *self, PyObject * args)
 {
 
 	ue_py_check(self);
-
-	if (!FActorFolders::IsAvailable())
-		return PyErr_Format(PyExc_Exception, "FActorFolders is not available");
 
 	UWorld *world = ue_get_uworld(self);
 	if (!world)

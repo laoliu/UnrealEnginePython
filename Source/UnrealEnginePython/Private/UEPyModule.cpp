@@ -260,6 +260,7 @@ static PyMethodDef unreal_engine_methods[] = {
 	{ "load_enum", py_unreal_engine_load_enum, METH_VARARGS, "" },
 
 	{ "find_object", py_unreal_engine_find_object, METH_VARARGS, "" },
+	{ "find_all_objects", py_unreal_engine_find_all_objects, METH_VARARGS, "" },
 	{ "load_object", py_unreal_engine_load_object, METH_VARARGS, "" },
 
 	{ "load_package", py_unreal_engine_load_package, METH_VARARGS, "" },
@@ -921,7 +922,9 @@ static PyMethodDef ue_PyUObject_methods[] = {
 
 	{ "destructible_apply_damage", (PyCFunction)py_ue_destructible_apply_damage, METH_VARARGS, "" },
 
+	{ "get_view_target", (PyCFunction)py_ue_get_view_target, METH_VARARGS, "" },
 	{ "set_view_target", (PyCFunction)py_ue_set_view_target, METH_VARARGS, "" },
+	{ "set_view_target_with_blend", (PyCFunction)py_ue_set_view_target_with_blend, METH_VARARGS, "" },
 	{ "get_world_delta_seconds", (PyCFunction)py_ue_get_world_delta_seconds, METH_VARARGS, "" },
 
 	{ "get_levels", (PyCFunction)py_ue_get_levels, METH_VARARGS, "" },
@@ -967,6 +970,7 @@ static PyMethodDef ue_PyUObject_methods[] = {
 	{ "set_physics_angular_velocity", (PyCFunction)py_ue_set_physics_angular_velocity, METH_VARARGS, "" },
 	{ "get_physics_angular_velocity", (PyCFunction)py_ue_get_physics_angular_velocity, METH_VARARGS, "" },
 	{ "find_object", (PyCFunction)py_ue_find_object, METH_VARARGS, "" },
+	{ "find_all_objects", (PyCFunction)py_ue_find_all_objects, METH_VARARGS, "" },
 	{ "get_world", (PyCFunction)py_ue_get_world, METH_VARARGS, "" },
 	{ "has_world", (PyCFunction)py_ue_has_world, METH_VARARGS, "" },
 
@@ -1950,7 +1954,7 @@ UClass* unreal_engine_new_uclass(char* name, UClass* outer_parent)
 		new_object->ClearFunctionMapsCaches();
 		new_object->PurgeClass(true);
 		new_object->Children = nullptr;
-		new_object->ClassAddReferencedObjects = parent->ClassAddReferencedObjects;
+		new_object->ScriptAndPropertyObjectReferences = parent->ScriptAndPropertyObjectReferences;// ClassAddReferencedObjects;
 		// NOTA BENE we may need to do something with ChildProperties now
 		// as apparently the previous Children list now split into 2 lists
 		// with properties in ChildProperties

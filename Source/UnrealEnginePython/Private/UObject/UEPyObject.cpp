@@ -10,7 +10,7 @@
 #include "Engine/UserDefinedEnum.h"
 
 #if WITH_EDITOR
-#include "Runtime/AssetRegistry/Public/AssetRegistryModule.h"
+#include "Runtime/AssetRegistry/Public/AssetRegistry/AssetRegistryModule.h"
 #include "ObjectTools.h"
 #include "UnrealEd.h"
 #include "Runtime/Core/Public/HAL/FeedbackContextAnsi.h"

@@ -78,12 +78,13 @@ PyObject *py_ue_sound_get_data(ue_PyUObject *self, PyObject * args)
 	if (!sound)
 		return PyErr_Format(PyExc_Exception, "UObject is not a USoundWave.");
 
-	FByteBulkData raw_data = sound->RawData;
+	UE::Serialization::FEditorBulkData raw_data = sound->RawData;
 
-	char *data = (char *)raw_data.Lock(LOCK_READ_ONLY);
-	int32 data_size = raw_data.GetBulkDataSize();
-	PyObject *py_data = PyBytes_FromStringAndSize(data, data_size);
-	raw_data.Unlock();
+	FSharedBuffer Buffer = raw_data.GetPayload().Get();
+	//char *data = (char *)raw_data.Lock(LOCK_READ_ONLY);
+	int32 data_size = raw_data.GetPayloadSize();
+	PyObject *py_data = PyBytes_FromStringAndSize((const char*)Buffer.GetData(), data_size);
+	//raw_data.Unlock();
 	return py_data;
 }
 
@@ -105,10 +106,13 @@ PyObject *py_ue_sound_set_data(ue_PyUObject *self, PyObject * args)
 	sound->FreeResources();
 	sound->InvalidateCompressedData();
 
-	sound->RawData.Lock(LOCK_READ_WRITE);
-	void *data = sound->RawData.Realloc(sound_buffer.len);
-	FMemory::Memcpy(data, sound_buffer.buf, sound_buffer.len);
-	sound->RawData.Unlock();
+	FSharedBuffer Buffer;
+	Buffer = FSharedBuffer::MakeView(sound_buffer.buf, sound_buffer.len, Buffer);
+	sound->RawData.UpdatePayload(Buffer);
+	//sound->RawData.Lock(LOCK_READ_WRITE);
+	//void *data = sound->RawData.Realloc(sound_buffer.len);
+	//FMemory::Memcpy(data, sound_buffer.buf, sound_buffer.len);
+	//sound->RawData.Unlock();
 
 	Py_RETURN_NONE;
 }

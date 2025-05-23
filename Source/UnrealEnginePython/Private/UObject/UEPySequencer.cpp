@@ -18,7 +18,7 @@
 #include "Editor/UnrealEd/Public/Toolkits/AssetEditorManager.h"
 #endif
 #if ENGINE_MAJOR_VERSION == 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 20)
-#include "LevelSequenceEditor/Private/LevelSequenceEditorToolkit.h"
+#include "G:/Program Files/EpicGameLinux/UE_5.3/Engine/Plugins/MovieScene/LevelSequenceEditor/Source/LevelSequenceEditor/Private/LevelSequenceEditorToolkit.h"
 #else
 #include "Private/LevelSequenceEditorToolkit.h"
 #endif
@@ -38,7 +38,7 @@
 #else
 #include "Editor/UnrealEd/Public/FbxImporter.h"
 #endif
-#include "Editor/MovieSceneTools/Public/MatineeImportTools.h"
+//#include "Editor/MovieSceneTools/Public/MatineeImportTools.h"
 #endif
 
 #include "GameFramework/Actor.h"
@@ -824,7 +824,7 @@ PyObject *py_ue_sequencer_create_folder(ue_PyUObject *self, PyObject * args)
 	else
 	{
 		scene->Modify();
-		scene->GetRootFolders().Add(new_folder);
+		//scene->GetRootFolders().Add(new_folder);
 	}
 
 	Py_RETURN_UOBJECT(new_folder);

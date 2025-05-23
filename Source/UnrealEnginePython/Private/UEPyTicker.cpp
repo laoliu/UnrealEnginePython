@@ -26,7 +26,7 @@ static void ue_pyfdelegatehandle_dealloc(ue_PyFDelegateHandle *self)
 static PyTypeObject ue_PyFDelegateHandleType = {
 	PyVarObject_HEAD_INIT(NULL, 0)
 	"unreal_engine.FDelegateHandle", /* tp_name */
-	sizeof(ue_PyFDelegateHandle), /* tp_basicsize */
+	sizeof(ue_PyFDelegateHandle)+64, /* tp_basicsize */
 	0,                         /* tp_itemsize */
 	(destructor)ue_pyfdelegatehandle_dealloc,       /* tp_dealloc */
 	0,                         /* tp_print */
@@ -83,6 +83,7 @@ PyObject *py_unreal_engine_add_ticker(PyObject * self, PyObject * args)
 	{
 		return PyErr_Format(PyExc_Exception, "unable to allocate FDelegateHandle python object");
 	}
+	ret->dhandle.Reset();
 
 	FTickerDelegate ticker_delegate;
 	TSharedRef<FPythonSmartDelegate> py_delegate = MakeShareable(new FPythonSmartDelegate);
@@ -90,8 +91,10 @@ PyObject *py_unreal_engine_add_ticker(PyObject * self, PyObject * args)
 
 	ticker_delegate.BindSP(py_delegate, &FPythonSmartDelegate::Tick);
 
+
 #if ENGINE_MAJOR_VERSION == 5
-	ret->dhandle = FTSTicker::GetCoreTicker().AddTicker(ticker_delegate, delay);
+	FTSTicker::FDelegateHandle h = FTSTicker::GetCoreTicker().AddTicker(ticker_delegate, delay);
+	ret->dhandle = h;
 #else
 	ret->dhandle = FTicker::GetCoreTicker().AddTicker(ticker_delegate, delay);
 #endif

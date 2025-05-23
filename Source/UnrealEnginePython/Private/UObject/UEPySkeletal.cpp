@@ -939,15 +939,15 @@ PyObject *py_ue_skeletal_mesh_build_lod(ue_PyUObject *self, PyObject * args, PyO
 #if !(ENGINE_MAJOR_VERSION == 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 20))
 	mesh->LODInfo[lod_index].LODHysteresis = 0.02;
 #else
-	mesh->GetLODInfo(lod_index)->LODHysteresis = 0.02;
+	//mesh->GetLODInfo(lod_index)->LODHysteresis = 0.02;
 #endif
 
-	FSkeletalMeshOptimizationSettings settings;
+	//FSkeletalMeshOptimizationSettings settings;
 
 #if !(ENGINE_MAJOR_VERSION == 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 20))
 	mesh->LODInfo[lod_index].ReductionSettings = settings;
 #else
-	mesh->GetLODInfo(lod_index)->ReductionSettings = settings;
+	//mesh->GetLODInfo(lod_index)->ReductionSettings = settings;
 #endif
 
 

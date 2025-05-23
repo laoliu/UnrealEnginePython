@@ -25,7 +25,8 @@ PyObject *py_unreal_engine_get_content_dir(PyObject *, PyObject *);
 PyObject *py_unreal_engine_get_game_saved_dir(PyObject *, PyObject *);
 PyObject *py_unreal_engine_get_game_user_developer_dir(PyObject *, PyObject *);
 
-PyObject *py_unreal_engine_find_object(PyObject *, PyObject *);
+PyObject* py_unreal_engine_find_object(PyObject*, PyObject*);
+PyObject* py_unreal_engine_find_all_objects(PyObject*, PyObject*);
 PyObject *py_unreal_engine_find_class(PyObject *, PyObject *);
 PyObject *py_unreal_engine_find_struct(PyObject *, PyObject *);
 PyObject *py_unreal_engine_find_enum(PyObject *, PyObject *);

@@ -8,7 +8,7 @@
 #include "Runtime/Slate/Public/Widgets/Input/SSearchBox.h"
 #include "Runtime/Launch/Resources/Version.h"
 #include "Runtime/Slate/Public/Framework/Text/SlateTextLayout.h"
-#include "Editor/EditorStyle/Public/Classes/EditorStyleSettings.h"
+#include "Editor/UnrealEd/Classes/Settings/EditorStyleSettings.h"
 #include "SlateBasics.h"
 #include "EditorStyle.h"
 
@@ -319,7 +319,7 @@ bool FPythonLogTextLayoutMarshaller::AppendMessage(const TCHAR* InText, const EL
 void FPythonLogTextLayoutMarshaller::AppendMessageToTextLayout(const TSharedPtr<FLogMessage>& InMessage)
 {
 
-	const FTextBlockStyle& MessageTextStyle = FEditorStyle::Get().GetWidgetStyle<FTextBlockStyle>(InMessage->Style);
+	const FTextBlockStyle& MessageTextStyle = FAppStyle::Get().GetWidgetStyle<FTextBlockStyle>(InMessage->Style);
 
 	TSharedRef<FString> LineText = InMessage->Message;
 
@@ -338,7 +338,7 @@ void FPythonLogTextLayoutMarshaller::AppendMessagesToTextLayout(const TArray<TSh
 	{
 
 
-		const FTextBlockStyle& MessageTextStyle = FEditorStyle::Get().GetWidgetStyle<FTextBlockStyle>(CurrentMessage->Style);
+		const FTextBlockStyle& MessageTextStyle = FAppStyle::Get().GetWidgetStyle<FTextBlockStyle>(CurrentMessage->Style);
 
 		TSharedRef<FString> LineText = CurrentMessage->Message;
 
@@ -378,8 +378,8 @@ void SPythonLog::Construct(const FArguments& InArgs)
 #endif
 
 	MessagesTextBox = SNew(SMultiLineEditableTextBox)
-		.Style(FEditorStyle::Get(), "Log.TextBox")
-		.TextStyle(FEditorStyle::Get(), "Log.Normal")
+		.Style(FAppStyle::Get(), "Log.TextBox")
+		.TextStyle(FAppStyle::Get(), "Log.Normal")
 		.ForegroundColor(FLinearColor::Gray)
 		.Marshaller(MessagesTextMarshaller)
 		.IsReadOnly(true)
@@ -396,7 +396,7 @@ void SPythonLog::Construct(const FArguments& InArgs)
 		[
 			SNew(SBorder)
 			.Padding(3)
-		.BorderImage(FEditorStyle::GetBrush("ToolPanel.GroupBorder"))
+		.BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
 		[
 			SNew(SVerticalBox)
 
@@ -465,7 +465,7 @@ bool SPythonLog::CreateLogMessages(const TCHAR* V, ELogVerbosity::Type Verbosity
 		if (UObjectInitialized() && !GExitPurge)
 		{
 			// Logging can happen very late during shutdown, even after the UObject system has been torn down, hence the init check above
-			LogTimestampMode = GetDefault<UEditorStyleSettings>()->LogTimestampMode;
+			LogTimestampMode = ELogTimes::SinceGStartTime;// GetDefault<UEditorStyleSettings>()->LogTimestampMode;
 		}
 
 		const int32 OldNumMessages = OutMessages.Num();

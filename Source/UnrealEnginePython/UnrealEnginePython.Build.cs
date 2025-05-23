@@ -129,7 +129,8 @@ public class UnrealEnginePython : ModuleRules
             {
                 "Core",
                 "Sockets",
-                "Networking"
+                "Networking",
+                "AssetRegistry", "SlateCore", "AnimationCore" 
 				// ... add other public dependencies that you statically link with here ...
 			}
             );

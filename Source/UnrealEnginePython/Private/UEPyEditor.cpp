@@ -5,7 +5,7 @@
 
 #include "Developer/AssetTools/Public/AssetToolsModule.h"
 #include "Editor/UnrealEd/Classes/Factories/Factory.h"
-#include "Runtime/AssetRegistry/Public/AssetRegistryModule.h"
+#include "Runtime/AssetRegistry/Public/AssetRegistry/AssetRegistryModule.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "Editor/ContentBrowser/Public/ContentBrowserModule.h"
 #include "Editor/UnrealEd/Public/PackageTools.h"

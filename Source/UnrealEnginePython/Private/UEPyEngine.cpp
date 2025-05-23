@@ -566,6 +566,36 @@ PyObject *py_unreal_engine_find_object(PyObject * self, PyObject * args)
 	Py_RETURN_UOBJECT(u_object);
 }
 
+PyObject* py_unreal_engine_find_all_objects(PyObject* self, PyObject* args)
+{
+	char* name;
+	if (!PyArg_ParseTuple(args, "s:find_all_objects", &name))
+	{
+		return NULL;
+	}
+
+	PyObject* ret = PyList_New(0);
+
+	for (TObjectIterator<AActor> Itr; Itr; ++Itr)
+	{
+		UObject* u_obj = *Itr;
+		ue_PyUObject* py_obj = ue_get_python_uobject(u_obj);
+		if (!py_obj)
+			continue;
+
+		FString fName = u_obj->GetFullName();
+		int32 lastPos;
+		int32 len = fName.Len();
+		bool b = fName.FindLastChar('.', lastPos);
+		if (b && len > lastPos && lastPos > 0)
+		{
+			FString className = fName.Right(len - lastPos - 1);
+			if (className.Contains(name))
+				PyList_Append(ret, (PyObject*)py_obj);
+		}
+	}
+	return ret;
+}
 
 PyObject *py_unreal_engine_new_object(PyObject * self, PyObject * args)
 {
