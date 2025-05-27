@@ -74,6 +74,7 @@ PyObject *py_ue_sound_get_data(ue_PyUObject *self, PyObject * args)
 {
 	ue_py_check(self);
 
+#if WITH_EDITORONLY_DATA
 	USoundWave *sound = ue_py_check_type<USoundWave>(self);
 	if (!sound)
 		return PyErr_Format(PyExc_Exception, "UObject is not a USoundWave.");
@@ -86,6 +87,9 @@ PyObject *py_ue_sound_get_data(ue_PyUObject *self, PyObject * args)
 	PyObject *py_data = PyBytes_FromStringAndSize((const char*)Buffer.GetData(), data_size);
 	//raw_data.Unlock();
 	return py_data;
+#else
+	return nullptr;
+#endif
 }
 
 PyObject *py_ue_sound_set_data(ue_PyUObject *self, PyObject * args)
@@ -106,6 +110,7 @@ PyObject *py_ue_sound_set_data(ue_PyUObject *self, PyObject * args)
 	sound->FreeResources();
 	sound->InvalidateCompressedData();
 
+#if WITH_EDITORONLY_DATA
 	FSharedBuffer Buffer;
 	Buffer = FSharedBuffer::MakeView(sound_buffer.buf, sound_buffer.len, Buffer);
 	sound->RawData.UpdatePayload(Buffer);
@@ -113,6 +118,7 @@ PyObject *py_ue_sound_set_data(ue_PyUObject *self, PyObject * args)
 	//void *data = sound->RawData.Realloc(sound_buffer.len);
 	//FMemory::Memcpy(data, sound_buffer.buf, sound_buffer.len);
 	//sound->RawData.Unlock();
+#endif
 
 	Py_RETURN_NONE;
 }
