@@ -189,7 +189,8 @@ PyObject *py_ue_skeleton_add_bone(ue_PyUObject *self, PyObject * args)
 		// horrible hack to modify the skeleton in place
 		FReferenceSkeletonModifier modifier((FReferenceSkeleton &)ref, skeleton);
 
-		TCHAR *bone_name = UTF8_TO_TCHAR(name);
+		FString BoneNameStr = UTF8_TO_TCHAR(name);
+		const TCHAR* bone_name = *BoneNameStr;
 
 		modifier.Add(FMeshBoneInfo(FName(bone_name), FString(bone_name), parent_index), transform->transform);
 	}

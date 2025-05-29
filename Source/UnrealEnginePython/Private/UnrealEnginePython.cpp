@@ -160,25 +160,22 @@ void FUnrealEnginePythonModule::UESetupPythonInterpreter(bool verbose)
 
 	PyObject *py_path = PyDict_GetItemString(py_sys_dict, "path");
 
-	char *zip_path = TCHAR_TO_UTF8(*ZipPath);
-	PyObject *py_zip_path = PyUnicode_FromString(zip_path);
+	PyObject *py_zip_path = PyUnicode_FromString(TCHAR_TO_UTF8(*ZipPath));
 	PyList_Insert(py_path, 0, py_zip_path);
 
 
 	int i = 0;
 	for (FString ScriptsPath : ScriptsPaths)
 	{
-		char *scripts_path = TCHAR_TO_UTF8(*ScriptsPath);
-		PyObject *py_scripts_path = PyUnicode_FromString(scripts_path);
+		PyObject *py_scripts_path = PyUnicode_FromString(TCHAR_TO_UTF8(*ScriptsPath));
 		PyList_Insert(py_path, i++, py_scripts_path);
 		if (verbose)
 		{
-			UE_LOG(LogPython, Log, TEXT("Python Scripts search path: %s"), UTF8_TO_TCHAR(scripts_path));
+			UE_LOG(LogPython, Log, TEXT("Python Scripts search path: %s"), (*ScriptsPath));
 		}
 	}
 
-	char *additional_modules_path = TCHAR_TO_UTF8(*AdditionalModulesPath);
-	PyObject *py_additional_modules_path = PyUnicode_FromString(additional_modules_path);
+	PyObject *py_additional_modules_path = PyUnicode_FromString(TCHAR_TO_UTF8(*AdditionalModulesPath));
 	PyList_Insert(py_path, 0, py_additional_modules_path);
 
 	if (verbose)
@@ -287,16 +284,19 @@ void FUnrealEnginePythonModule::StartupModule()
 	if (GConfig->GetString(UTF8_TO_TCHAR("Python"), UTF8_TO_TCHAR("Home"), PythonHome, GEngineIni))
 	{
 #if PY_MAJOR_VERSION >= 3
-	#if ENGINE_MAJOR_VERSION == 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 20)
-		wchar_t *home = (wchar_t *)(TCHAR_TO_WCHAR(*PythonHome));
+	#if ENGINE_MAJOR_VERSION == 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 20)		
+		FPlatformMisc::SetEnvironmentVar(TEXT("PYTHONHOME"), *PythonHome);
+		Py_SetPythonHome(TCHAR_TO_WCHAR(*PythonHome));
 	#else
 		wchar_t *home = (wchar_t *)*PythonHome;
+		FPlatformMisc::SetEnvironmentVar(TEXT("PYTHONHOME"), *PythonHome);
+		Py_SetPythonHome(home);
 	#endif
 #else
 		char *home = TCHAR_TO_UTF8(*PythonHome);
-#endif
 		FPlatformMisc::SetEnvironmentVar(TEXT("PYTHONHOME"), *PythonHome);
 		Py_SetPythonHome(home);
+#endif
 	}
 
 	if (GConfig->GetString(UTF8_TO_TCHAR("Python"), UTF8_TO_TCHAR("RelativeHome"), PythonHome, GEngineIni))
@@ -306,15 +306,16 @@ void FUnrealEnginePythonModule::StartupModule()
 		PythonHome = FPaths::ConvertRelativePathToFull(PythonHome);
 #if PY_MAJOR_VERSION >= 3
 	#if ENGINE_MAJOR_VERSION == 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 20)
-		wchar_t *home = (wchar_t *)(TCHAR_TO_WCHAR(*PythonHome));
+		Py_SetPythonHome(TCHAR_TO_WCHAR(*PythonHome));
 	#else
 		wchar_t *home = (wchar_t *)*PythonHome;
+		Py_SetPythonHome(home);
 	#endif
 #else
 		char *home = TCHAR_TO_UTF8(*PythonHome);
+		Py_SetPythonHome(home);
 #endif
 
-		Py_SetPythonHome(home);
 	}
 
 	TArray<FString> ImportModules;
@@ -324,14 +325,15 @@ void FUnrealEnginePythonModule::StartupModule()
 	{
 #if PY_MAJOR_VERSION >= 3
 	#if ENGINE_MAJOR_VERSION == 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 20)
-		wchar_t *program_name = (wchar_t *)(TCHAR_TO_WCHAR(*IniValue));
+		Py_SetProgramName(TCHAR_TO_WCHAR(*IniValue));
 	#else
 		wchar_t *program_name = (wchar_t *)*IniValue;
+		Py_SetProgramName(program_name);
 	#endif
 #else
 		char *program_name = TCHAR_TO_UTF8(*IniValue);
-#endif
 		Py_SetProgramName(program_name);
+#endif
 	}
 
 	if (GConfig->GetString(UTF8_TO_TCHAR("Python"), UTF8_TO_TCHAR("RelativeProgramName"), IniValue, GEngineIni))
@@ -341,14 +343,15 @@ void FUnrealEnginePythonModule::StartupModule()
 		IniValue = FPaths::ConvertRelativePathToFull(IniValue);
 #if PY_MAJOR_VERSION >= 3
 	#if ENGINE_MAJOR_VERSION == 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 20)
-		wchar_t *program_name = (wchar_t *)(TCHAR_TO_WCHAR(*IniValue));
+		Py_SetProgramName(TCHAR_TO_WCHAR(*IniValue));
 	#else
 		wchar_t *program_name = (wchar_t *)*IniValue;
+		Py_SetProgramName(program_name);
 	#endif
 #else
 		char *program_name = TCHAR_TO_UTF8(*IniValue);
-#endif
 		Py_SetProgramName(program_name);
+#endif
 	}
 
 	if (GConfig->GetString(UTF8_TO_TCHAR("Python"), UTF8_TO_TCHAR("ScriptsPath"), IniValue, GEngineIni))

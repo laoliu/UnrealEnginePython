@@ -4357,8 +4357,7 @@ PyObject* py_ue_ufunction_call(UFunction* u_function, UObject* u_obj, PyObject* 
 		}
 		else if (kwargs)
 		{
-			char* prop_name = TCHAR_TO_UTF8(*prop->GetName());
-			PyObject* dict_value = PyDict_GetItemString(kwargs, prop_name);
+			PyObject* dict_value = PyDict_GetItemString(kwargs, TCHAR_TO_UTF8(*prop->GetName()));
 			if (dict_value)
 			{
 				if (!ue_py_convert_pyobject(dict_value, prop, buffer, 0))

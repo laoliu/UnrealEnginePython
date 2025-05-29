@@ -27,10 +27,12 @@ public class UnrealEnginePython : ModuleRules
 
     private string[] macKnownPaths =
     {
+        "/Library/Frameworks/Python.framework/Versions/3.9",
         "/Library/Frameworks/Python.framework/Versions/3.7",
         "/Library/Frameworks/Python.framework/Versions/3.6",
         "/Library/Frameworks/Python.framework/Versions/3.5",
         "/Library/Frameworks/Python.framework/Versions/2.7",
+        "/System/Library/Frameworks/Python.framework/Versions/3.9",
         "/System/Library/Frameworks/Python.framework/Versions/3.7",
         "/System/Library/Frameworks/Python.framework/Versions/3.6",
         "/System/Library/Frameworks/Python.framework/Versions/3.5",
@@ -39,6 +41,7 @@ public class UnrealEnginePython : ModuleRules
 
     private string[] linuxKnownIncludesPaths =
     {
+        "/usr/local/include/python3.9",
         "/usr/local/include/python3.8",
         "/usr/local/include/python3.8m",
         "/usr/local/include/python3.7",
@@ -48,6 +51,7 @@ public class UnrealEnginePython : ModuleRules
         "/usr/local/include/python3.5",
         "/usr/local/include/python3.5m",
         "/usr/local/include/python2.7",
+        "/usr/include/python3.9",
         "/usr/include/python3.8",
         "/usr/include/python3.8m",
         "/usr/include/python3.7",
@@ -61,8 +65,10 @@ public class UnrealEnginePython : ModuleRules
 
     private string[] linuxKnownLibsPaths =
     {
+        "/usr/local/lib/libpython3.9.so",
         "/usr/local/lib/libpython3.8.so",
         "/usr/local/lib/libpython3.8m.so",
+        "/usr/local/lib/x86_64-linux-gnu/libpython3.9.so",
         "/usr/local/lib/x86_64-linux-gnu/libpython3.8.so",
         "/usr/local/lib/x86_64-linux-gnu/libpython3.8m.so",
         "/usr/local/lib/libpython3.7.so",
@@ -79,8 +85,10 @@ public class UnrealEnginePython : ModuleRules
         "/usr/local/lib/x86_64-linux-gnu/libpython3.5m.so",
         "/usr/local/lib/libpython2.7.so",
         "/usr/local/lib/x86_64-linux-gnu/libpython2.7.so",
+        "/usr/lib/libpython3.9.so",
         "/usr/lib/libpython3.8.so",
         "/usr/lib/libpython3.8m.so",
+        "/usr/lib/x86_64-linux-gnu/libpython3.9.so",
         "/usr/lib/x86_64-linux-gnu/libpython3.8.so",
         "/usr/lib/x86_64-linux-gnu/libpython3.8m.so",
         "/usr/lib/libpython3.7.so",
@@ -265,7 +273,7 @@ public class UnrealEnginePython : ModuleRules
 		{
             string PythonAndroidLibsDirectory = Path.Combine(PluginDirectory, "android");
 
-            string includePath = Path.Combine(PythonAndroidLibsDirectory, "include", "python3.7m");
+            string includePath = Path.Combine(PythonAndroidLibsDirectory, "include", "python3.9");
             PublicIncludePaths.Add(includePath);
 
             PublicSystemLibraryPaths.AddRange(
@@ -279,7 +287,7 @@ public class UnrealEnginePython : ModuleRules
                 Path.Combine(PythonAndroidLibsDirectory, "libs", "arm64-v8a", "libcrypto1.1.so"),
                 Path.Combine(PythonAndroidLibsDirectory, "libs", "arm64-v8a", "libffi.so"),
                 Path.Combine(PythonAndroidLibsDirectory, "libs", "arm64-v8a", "liblzma.so"),
-                Path.Combine(PythonAndroidLibsDirectory, "libs", "arm64-v8a", "libpython3.7m.so"),
+                Path.Combine(PythonAndroidLibsDirectory, "libs", "arm64-v8a", "libpython3.9.so"),
                 Path.Combine(PythonAndroidLibsDirectory, "libs", "arm64-v8a", "librubicon.so"),
                 Path.Combine(PythonAndroidLibsDirectory, "libs", "arm64-v8a", "libsqlite3.so"),
                 Path.Combine(PythonAndroidLibsDirectory, "libs", "arm64-v8a", "libssl.so"),

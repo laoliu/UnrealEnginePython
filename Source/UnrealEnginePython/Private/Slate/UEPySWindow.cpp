@@ -29,9 +29,7 @@ static PyObject *py_ue_swindow_get_title(ue_PySWindow *self, PyObject * args)
 {
 	ue_py_slate_cast(SWindow);
 	
-	const char *title = TCHAR_TO_UTF8(*py_SWindow->GetTitle().ToString());
-
-	return PyUnicode_FromString(title);
+	return PyUnicode_FromString(TCHAR_TO_UTF8(*py_SWindow->GetTitle().ToString()));
 }
 
 static PyObject *py_ue_swindow_resize(ue_PySWindow *self, PyObject * args)

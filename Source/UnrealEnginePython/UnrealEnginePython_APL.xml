@@ -32,11 +32,16 @@
         <copyFile src="$S(PluginDir)/../../android/libs/arm64-v8a/liblzma.so"
                   dst="$S(BuildDir)/libs/arm64-v8a/liblzma.so" />
     </resourceCopies>
-    <resourceCopies>
-        <log text="python3.7m APL copying files for $S(Architecture)/"/>
-        <copyFile src="$S(PluginDir)/../../android/libs/arm64-v8a/libpython3.7m.so"
-                  dst="$S(BuildDir)/libs/arm64-v8a/libpython3.7m.so" />
-    </resourceCopies>
+	<resourceCopies>
+		<log text="python3.9 APL copying files for $S(Architecture)/"/>
+		<copyFile src="$S(PluginDir)/../../android/libs/arm64-v8a/libpython3.9.so"
+                  dst="$S(BuildDir)/libs/arm64-v8a/libpython3.9.so" />
+	</resourceCopies>
+	<resourceCopies>
+		<log text="ld-linux-aarch64 APL copying files for $S(Architecture)/"/>
+		<copyFile src="$S(PluginDir)/../../android/libs/arm64-v8a/ld-linux-aarch64.so"
+                  dst="$S(BuildDir)/libs/arm64-v8a/ld-linux-aarch64.so" />
+	</resourceCopies>
     <resourceCopies>
         <log text="rubicon APL copying files for $S(Architecture)/"/>
         <copyFile src="$S(PluginDir)/../../android/libs/arm64-v8a/librubicon.so"
@@ -79,8 +84,8 @@
         <loadLibrary name="lzma" failmsg="lzma not loaded and required!" />
     </soLoadLibrary>
     <soLoadLibrary>
-        <log text="python3.7m APL adding loadLibrary references"/>
-        <loadLibrary name="python3.7m" failmsg="python3.6m not loaded and required!" />
+        <log text="python3.9 APL adding loadLibrary references"/>
+        <loadLibrary name="python3.9" failmsg="python3.9 not loaded and required!" />
     </soLoadLibrary>
     <soLoadLibrary>
         <log text="rubicon APL adding loadLibrary references"/>
