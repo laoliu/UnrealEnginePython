@@ -37,12 +37,12 @@
 #include <Python.h>
 #include <structmember.h>
 #elif PLATFORM_WINDOWS
-#include "G:/Program Files/EpicGameLinux/UE_5.3/Engine/Source/ThirdParty/Python3/Win64/include/pyconfig.h"
+#include <Python3/Win64/include/pyconfig.h>
 #ifndef SIZEOF_PID_T
 #define SIZEOF_PID_T 4
 #endif
-#include "G:/Program Files/EpicGameLinux/UE_5.3/Engine/Source/ThirdParty/Python3/Win64/include/Python.h"
-#include "G:/Program Files/EpicGameLinux/UE_5.3/Engine/Source/ThirdParty/Python3/Win64/include/structmember.h"
+#include <Python3/Win64/include/Python.h>
+#include <Python3/Win64/include/structmember.h>
 #endif
 
 typedef struct

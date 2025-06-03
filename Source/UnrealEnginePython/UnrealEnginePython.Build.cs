@@ -121,6 +121,8 @@ public class UnrealEnginePython : ModuleRules
         PublicIncludePaths.AddRange(
             new string[] {
 				// ... add public include paths required here ...
+                Target.UEThirdPartySourceDirectory,
+                Target.RelativeEnginePath
             }
             );
 
@@ -128,7 +130,7 @@ public class UnrealEnginePython : ModuleRules
         PrivateIncludePaths.AddRange(
             new string[] {
 				// ... add other private include paths required here ...
-			}
+            }
             );
 
 

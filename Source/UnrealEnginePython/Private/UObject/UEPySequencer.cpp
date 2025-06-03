@@ -18,7 +18,7 @@
 #include "Editor/UnrealEd/Public/Toolkits/AssetEditorManager.h"
 #endif
 #if ENGINE_MAJOR_VERSION == 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 20)
-#include "G:/Program Files/EpicGameLinux/UE_5.3/Engine/Plugins/MovieScene/LevelSequenceEditor/Source/LevelSequenceEditor/Private/LevelSequenceEditorToolkit.h"
+#include <Plugins/MovieScene/LevelSequenceEditor/Source/LevelSequenceEditor/Private/LevelSequenceEditorToolkit.h>
 #else
 #include "Private/LevelSequenceEditorToolkit.h"
 #endif

@@ -8,7 +8,7 @@
 #include "Runtime/Slate/Public/Widgets/Docking/SDockTab.h"
 #include "Runtime/Slate/Public/Widgets/Views/STableRow.h"
 #include "Runtime/Slate/Public/Framework/MultiBox/MultiBoxExtender.h"
-#include "G:/Program Files/EpicGameLinux/UE_5.3/Engine/Source/Runtime/CoreUObject/Public/AssetRegistry/AssetData.h"
+#include "Runtime/CoreUObject/Public/AssetRegistry/AssetData.h"
 
 void unreal_engine_py_log_error();
 template <typename T> T *ue_py_check_struct(PyObject *);
