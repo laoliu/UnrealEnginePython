@@ -275,7 +275,7 @@ public class UnrealEnginePython : ModuleRules
 		{
             string PythonAndroidLibsDirectory = Path.Combine(PluginDirectory, "android");
 
-            string includePath = Path.Combine(PythonAndroidLibsDirectory, "include", "python3.9");
+            string includePath = Path.Combine(PythonAndroidLibsDirectory, "include", "python3.11");
             PublicIncludePaths.Add(includePath);
 
             PublicSystemLibraryPaths.AddRange(
@@ -289,7 +289,7 @@ public class UnrealEnginePython : ModuleRules
                 Path.Combine(PythonAndroidLibsDirectory, "libs", "arm64-v8a", "libcrypto1.1.so"),
                 Path.Combine(PythonAndroidLibsDirectory, "libs", "arm64-v8a", "libffi.so"),
                 Path.Combine(PythonAndroidLibsDirectory, "libs", "arm64-v8a", "liblzma.so"),
-                Path.Combine(PythonAndroidLibsDirectory, "libs", "arm64-v8a", "libpython3.9.so"),
+                Path.Combine(PythonAndroidLibsDirectory, "libs", "arm64-v8a", "libpython3.11.so"),
                 Path.Combine(PythonAndroidLibsDirectory, "libs", "arm64-v8a", "librubicon.so"),
                 Path.Combine(PythonAndroidLibsDirectory, "libs", "arm64-v8a", "libsqlite3.so"),
                 Path.Combine(PythonAndroidLibsDirectory, "libs", "arm64-v8a", "libssl.so"),

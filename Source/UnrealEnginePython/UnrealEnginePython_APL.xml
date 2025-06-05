@@ -33,14 +33,9 @@
                   dst="$S(BuildDir)/libs/arm64-v8a/liblzma.so" />
     </resourceCopies>
 	<resourceCopies>
-		<log text="python3.9 APL copying files for $S(Architecture)/"/>
-		<copyFile src="$S(PluginDir)/../../android/libs/arm64-v8a/libpython3.9.so"
-                  dst="$S(BuildDir)/libs/arm64-v8a/libpython3.9.so" />
-	</resourceCopies>
-	<resourceCopies>
-		<log text="ld-linux-aarch64 APL copying files for $S(Architecture)/"/>
-		<copyFile src="$S(PluginDir)/../../android/libs/arm64-v8a/ld-linux-aarch64.so"
-                  dst="$S(BuildDir)/libs/arm64-v8a/ld-linux-aarch64.so" />
+		<log text="python3.11 APL copying files for $S(Architecture)/"/>
+		<copyFile src="$S(PluginDir)/../../android/libs/arm64-v8a/libpython3.11.so"
+                  dst="$S(BuildDir)/libs/arm64-v8a/libpython3.11.so" />
 	</resourceCopies>
     <resourceCopies>
         <log text="rubicon APL copying files for $S(Architecture)/"/>
@@ -57,9 +52,9 @@
         <copyFile src="$S(PluginDir)/../../android/libs/arm64-v8a/libssl.so"
                   dst="$S(BuildDir)/libs/arm64-v8a/libssl.so" />
     </resourceCopies>
-    <resourceCopies>
-        <log text="ssl1.1 APL copying files for $S(Architecture)/"/>
-        <copyFile src="$S(PluginDir)/../../android/libs/arm64-v8a/libssl1.1.so"
+	<resourceCopies>
+		<log text="ssl1.1 APL copying files for $S(Architecture)/"/>
+		<copyFile src="$S(PluginDir)/../../android/libs/arm64-v8a/libssl1.1.so"
                   dst="$S(BuildDir)/libs/arm64-v8a/libssl1.1.so" />
     </resourceCopies>
 
@@ -84,8 +79,8 @@
         <loadLibrary name="lzma" failmsg="lzma not loaded and required!" />
     </soLoadLibrary>
     <soLoadLibrary>
-        <log text="python3.9 APL adding loadLibrary references"/>
-        <loadLibrary name="python3.9" failmsg="python3.9 not loaded and required!" />
+        <log text="python3.11 APL adding loadLibrary references"/>
+        <loadLibrary name="python3.11" failmsg="python3.11 not loaded and required!" />
     </soLoadLibrary>
     <soLoadLibrary>
         <log text="rubicon APL adding loadLibrary references"/>

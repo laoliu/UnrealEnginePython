@@ -509,14 +509,20 @@ void FUnrealEnginePythonModule::StartupModule()
 	}
 
 	FString PyScriptsSearchPath = GExternalFilePath / InDirectory;
+	FString InDirectory2 = FString(TEXT("Scripts/lib/python3.11"));
+	FString InDirectory3 = FString(TEXT("Scripts/lib/python3.11/site-packages"));
+	FString PyScriptsSearchPath2 = GExternalFilePath / InDirectory2;
+	FString PyScriptsSearchPath3 = GExternalFilePath / InDirectory3;
 
 	ScriptsPaths.Reset();
 
 	ScriptsPaths.Add(PyScriptsSearchPath);
 
-	UE_LOG(LogPython, Warning, TEXT("Setting Android Python Scripts Search Path to %s"), *PyScriptsSearchPath);
+	UE_LOG(LogPython, Warning, TEXT("Setting Android Python Scripts Search Path to %s"), *PyScriptsSearchPath2);
 
-	Py_SetPath(Py_DecodeLocale(TCHAR_TO_UTF8(*PyScriptsSearchPath), NULL));
+	FString PySearchPath = PyScriptsSearchPath2 + FString(":") + PyScriptsSearchPath3 +FString(":") + PyScriptsSearchPath;
+
+	Py_SetPath(Py_DecodeLocale(TCHAR_TO_UTF8(*PySearchPath), NULL));
 #elif PLATFORM_IOS
     FString IOSContentPath = IFileManager::Get().ConvertToAbsolutePathForExternalAppForRead(*IFileManager::Get().GetFilenameOnDisk(*FPaths::ConvertRelativePathToFull(PROJECT_CONTENT_DIR)));
     FString PyScriptsSearchPath = IOSContentPath / FString(TEXT("lib")) + FString(":") +
