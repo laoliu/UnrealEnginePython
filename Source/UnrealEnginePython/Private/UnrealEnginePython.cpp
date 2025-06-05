@@ -474,6 +474,9 @@ void FUnrealEnginePythonModule::StartupModule()
 	init_unreal_engine_builtin();
 #if PLATFORM_ANDROID
 	FString InDirectory = FString(TEXT("Scripts"));
+	FString InDirectory1 = FString(TEXT("PythonLib"));
+	FString InDirectory2 = FString(TEXT("PythonLib/python3.11"));
+	FString InDirectory3 = FString(TEXT("PythonLib/python3.11/site-packages"));
 
 	extern FString GExternalFilePath;
 
@@ -503,14 +506,37 @@ void FUnrealEnginePythonModule::StartupModule()
 		if (FFileHelper::LoadFileToArray(MemFile, *SourceFilename, 0))
 		{
 			FString DestFilename = GExternalFilePath / InDirectory / Path;
+			UE_LOG(LogPython, Warning, TEXT("Script DestFilename %s"), *DestFilename);
+
+			FFileHelper::SaveArrayToFile(MemFile, *DestFilename);
+		}
+	}
+
+	FString DirectoryPath1 = FPaths::ProjectContentDir() / InDirectory1;
+	FileManager->IterateDirectoryRecursively(*DirectoryPath1, Visitor);
+	FString Prefix2 = FApp::GetProjectName() / FString(TEXT("Content/PythonLib/"));
+
+	for (TMap<FString, FDateTime>::TIterator TimestampIt(Visitor.FileTimes); TimestampIt; ++TimestampIt)
+	{
+		FString Path = TimestampIt.Key();
+
+		Path.RemoveFromStart(Prefix2);
+
+		// read the file contents and write it if successful to external path
+		TArray<uint8> MemFile;
+
+		const FString SourceFilename = TimestampIt.Key();
+
+		if (FFileHelper::LoadFileToArray(MemFile, *SourceFilename, 0))
+		{
+			FString DestFilename = GExternalFilePath / InDirectory1 / Path;
+			UE_LOG(LogPython, Warning, TEXT("Python DestFilename %s"), *DestFilename);
 
 			FFileHelper::SaveArrayToFile(MemFile, *DestFilename);
 		}
 	}
 
 	FString PyScriptsSearchPath = GExternalFilePath / InDirectory;
-	FString InDirectory2 = FString(TEXT("Scripts/lib/python3.11"));
-	FString InDirectory3 = FString(TEXT("Scripts/lib/python3.11/site-packages"));
 	FString PyScriptsSearchPath2 = GExternalFilePath / InDirectory2;
 	FString PyScriptsSearchPath3 = GExternalFilePath / InDirectory3;
 
