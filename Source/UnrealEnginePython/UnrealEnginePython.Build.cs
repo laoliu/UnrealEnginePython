@@ -27,6 +27,7 @@ public class UnrealEnginePython : ModuleRules
 
     private string[] macKnownPaths =
     {
+        "/Library/Frameworks/Python.framework/Versions/3.11",
         "/Library/Frameworks/Python.framework/Versions/3.9",
         "/Library/Frameworks/Python.framework/Versions/3.7",
         "/Library/Frameworks/Python.framework/Versions/3.6",
@@ -41,6 +42,7 @@ public class UnrealEnginePython : ModuleRules
 
     private string[] linuxKnownIncludesPaths =
     {
+        "/usr/local/include/python3.11",
         "/usr/local/include/python3.9",
         "/usr/local/include/python3.8",
         "/usr/local/include/python3.8m",
@@ -65,9 +67,11 @@ public class UnrealEnginePython : ModuleRules
 
     private string[] linuxKnownLibsPaths =
     {
+        "/usr/local/lib/libpython3.11.so",
         "/usr/local/lib/libpython3.9.so",
         "/usr/local/lib/libpython3.8.so",
         "/usr/local/lib/libpython3.8m.so",
+        "/usr/local/lib/x86_64-linux-gnu/libpython3.11.so",
         "/usr/local/lib/x86_64-linux-gnu/libpython3.9.so",
         "/usr/local/lib/x86_64-linux-gnu/libpython3.8.so",
         "/usr/local/lib/x86_64-linux-gnu/libpython3.8m.so",
@@ -85,9 +89,11 @@ public class UnrealEnginePython : ModuleRules
         "/usr/local/lib/x86_64-linux-gnu/libpython3.5m.so",
         "/usr/local/lib/libpython2.7.so",
         "/usr/local/lib/x86_64-linux-gnu/libpython2.7.so",
+        "/usr/lib/libpython3.11.so",
         "/usr/lib/libpython3.9.so",
         "/usr/lib/libpython3.8.so",
         "/usr/lib/libpython3.8m.so",
+        "/usr/lib/x86_64-linux-gnu/libpython3.11.so",
         "/usr/lib/x86_64-linux-gnu/libpython3.9.so",
         "/usr/lib/x86_64-linux-gnu/libpython3.8.so",
         "/usr/lib/x86_64-linux-gnu/libpython3.8m.so",
@@ -230,7 +236,7 @@ public class UnrealEnginePython : ModuleRules
 
         if (Target.Platform == UnrealTargetPlatform.Win64)
         {
-            string LibPath = Path.Combine(Target.UEThirdPartySourceDirectory, "Python3/Win64/libs/python39.lib");
+            string LibPath = Path.Combine(Target.UEThirdPartySourceDirectory, "Python3/Win64/libs/python311.lib");
             PublicSystemLibraryPaths.Add(Path.GetDirectoryName(LibPath));
             PrivateDependencyModuleNames.AddRange(
                 new string[] {
@@ -418,7 +424,7 @@ public class UnrealEnginePython : ModuleRules
     private string GetMacPythonLibFile(string basePath)
     {
         // first try with python3
-        for (int i = 9; i >= 0; i--)
+        for (int i = 15; i >= 0; i--)
         {
             string fileName = string.Format("libpython3.{0}.dylib", i);
             string fullPath = Path.Combine(basePath, "lib", fileName);
@@ -435,7 +441,7 @@ public class UnrealEnginePython : ModuleRules
         }
 
         // then python2
-        for (int i = 9; i >= 0; i--)
+        for (int i = 15; i >= 0; i--)
         {
             string fileName = string.Format("libpython2.{0}.dylib", i);
             string fullPath = Path.Combine(basePath, "lib", fileName);
@@ -479,7 +485,7 @@ public class UnrealEnginePython : ModuleRules
             System.Console.WriteLine("[WARNING] Ensure your python paths are set in GlobalConfig (DefaultEngine.ini) so the path can be corrected at runtime.");
         }
         // first try with python3
-        for (int i = 9; i >= 0; i--)
+        for (int i = 15; i >= 0; i--)
         {
             string fileName = string.Format("python3{0}.lib", i);
             string fullPath = Path.Combine(basePath, "libs", fileName);
@@ -490,7 +496,7 @@ public class UnrealEnginePython : ModuleRules
         }
 
         // then python2
-        for (int i = 9; i >= 0; i--)
+        for (int i = 15; i >= 0; i--)
         {
             string fileName = string.Format("python2{0}.lib", i);
             string fullPath = Path.Combine(basePath, "libs", fileName);
