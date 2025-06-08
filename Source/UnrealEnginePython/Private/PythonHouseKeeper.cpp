@@ -25,7 +25,12 @@ FUnrealEnginePythonHouseKeeper *FUnrealEnginePythonHouseKeeper::Get()
 void FUnrealEnginePythonHouseKeeper::RunGCDelegate()
 {
     FScopePythonGIL gil;
-    RunGC();
+    try {
+        RunGC();
+    }
+    catch (...) {
+        //UE_LOG(LogPython, Warning, TEXT("DEFREF'ing UObject at %p (refcnt: %d)"), Object, Tracker->PyUObject->ob_base.ob_refcnt);
+    }
 }
 
 int32 FUnrealEnginePythonHouseKeeper::RunGC()
@@ -77,6 +82,13 @@ void FUnrealEnginePythonHouseKeeper::UntrackUObject(UObject *Object)
 
 void FUnrealEnginePythonHouseKeeper::RegisterPyUObject(UObject *Object, ue_PyUObject *InPyUObject)
 {
+#if defined(UEPY_MEMORY_DEBUG)
+    FString name = Object->GetName();
+    UE_LOG(LogPython, Warning, TEXT("------------  %p"), *name);
+    if (Object->GetName().Equals("DefaultPhysicsVolume_0"))
+        return;
+#endif
+    
     UObjectPyMapping.Add(Object, FPythonUOjectTracker(Object, InPyUObject));
 }
 

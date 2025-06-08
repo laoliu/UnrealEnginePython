@@ -33,7 +33,7 @@
     {
       "Name": "PythonEditor",
       "Type": "Editor",
-      "LoadingPhase": "PostDefault"
+      "LoadingPhase": "PostEngineInit"
     }
   ],
   "Plugins": [

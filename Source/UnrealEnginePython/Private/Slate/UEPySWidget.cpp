@@ -380,7 +380,7 @@ static PyMethodDef ue_PySWidget_methods[] = {
 static void ue_PySWidget_dealloc(ue_PySWidget *self)
 {
 #if defined(UEPY_MEMORY_DEBUG)
-	UE_LOG(LogPython, Warning, TEXT("Destroying ue_PySWidget %p mapped to %s %p (slate refcount: %d)"), self, *self->s_widget->GetTypeAsString(), &self->s_widget.Get(), self->s_widget.GetSharedReferenceCount());
+	UE_LOG(LogPython, Warning, TEXT("Destroying ue_PySWidget %p mapped to %s %p (slate refcount: %d)"), self, *self->Widget->GetTypeAsString(), &self->Widget.Get(), self->Widget.GetSharedReferenceCount());
 #endif
 
 	if (self->weakreflist != nullptr)
