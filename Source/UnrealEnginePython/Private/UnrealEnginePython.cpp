@@ -477,6 +477,7 @@ void FUnrealEnginePythonModule::StartupModule()
 		FPlatformFileManager::Get().GetPlatformFile().CreateDirectory(*ProjectScriptsPath);
 	}
 	ScriptsPaths.Add(ProjectScriptsPath);
+	ScriptsPaths.Add(ProjectScriptsPath+"/game");
 
 #if WITH_EDITOR
 	for (TSharedRef<IPlugin>plugin : IPluginManager::Get().GetEnabledPlugins())
