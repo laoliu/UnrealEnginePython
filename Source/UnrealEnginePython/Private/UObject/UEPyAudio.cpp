@@ -79,7 +79,7 @@ PyObject *py_ue_sound_get_data(ue_PyUObject *self, PyObject * args)
 	if (!sound)
 		return PyErr_Format(PyExc_Exception, "UObject is not a USoundWave.");
 
-	UE::Serialization::FEditorBulkData raw_data = sound->RawData;
+	USoundWave::FEditorAudioBulkData raw_data = sound->RawData;
 
 	FSharedBuffer Buffer = raw_data.GetPayload().Get();
 	//char *data = (char *)raw_data.Lock(LOCK_READ_ONLY);

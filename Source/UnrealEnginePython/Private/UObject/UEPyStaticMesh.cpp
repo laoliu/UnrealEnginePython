@@ -152,7 +152,7 @@ PyObject *py_ue_static_mesh_import_lod(ue_PyUObject *self, PyObject * args)
 	if (!mesh)
 		return PyErr_Format(PyExc_Exception, "uobject is not a UStaticMesh");
 
-	if (FbxMeshUtils::ImportStaticMeshLOD(mesh, FString(UTF8_TO_TCHAR(filename)), lod_level))
+	if (FbxMeshUtils::ImportStaticMeshLOD(mesh, FString(UTF8_TO_TCHAR(filename)), lod_level, false))
 	{
 		Py_RETURN_TRUE;
 	}

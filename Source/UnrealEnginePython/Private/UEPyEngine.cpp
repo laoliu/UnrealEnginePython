@@ -1098,7 +1098,7 @@ PyObject *py_unreal_engine_create_package(PyObject *self, PyObject * args)
 #endif
 	if (!u_package)
 		return PyErr_Format(PyExc_Exception, "unable to create package");
-	u_package->FileName = *FPackageName::LongPackageNameToFilename(UTF8_TO_TCHAR(name), FPackageName::GetAssetPackageExtension());
+	u_package->Rename( *FPackageName::LongPackageNameToFilename(UTF8_TO_TCHAR(name), FPackageName::GetAssetPackageExtension()));	
 
 	u_package->FullyLoad();
 	u_package->MarkPackageDirty();
@@ -1127,7 +1127,7 @@ PyObject *py_unreal_engine_get_or_create_package(PyObject *self, PyObject * args
 #endif
 		if (!u_package)
 			return PyErr_Format(PyExc_Exception, "unable to create package");
-		u_package->FileName = *FPackageName::LongPackageNameToFilename(UTF8_TO_TCHAR(name), FPackageName::GetAssetPackageExtension());
+		u_package->Rename( *FPackageName::LongPackageNameToFilename(UTF8_TO_TCHAR(name), FPackageName::GetAssetPackageExtension()));
 
 		u_package->FullyLoad();
 		u_package->MarkPackageDirty();

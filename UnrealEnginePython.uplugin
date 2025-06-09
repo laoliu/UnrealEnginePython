@@ -18,22 +18,22 @@
     {
       "Name": "UnrealEnginePython",
       "Type": "Runtime",
-      "LoadingPhase": "Default"
+      "LoadingPhase": "PostEngineInit"
     },
     {
       "Name": "PythonAutomation",
       "Type": "Editor",
-      "LoadingPhase": "PostDefault"
+      "LoadingPhase": "PostEngineInit"
     },
     {
       "Name": "PythonConsole",
       "Type": "Editor",
-      "LoadingPhase": "PostDefault"
+      "LoadingPhase": "PostEngineInit"
     },
     {
       "Name": "PythonEditor",
       "Type": "Editor",
-      "LoadingPhase": "PostDefault"
+      "LoadingPhase": "PostEngineInit"
     }
   ],
   "Plugins": [

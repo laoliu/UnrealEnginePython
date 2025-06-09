@@ -4315,7 +4315,7 @@ PyObject* py_ue_ufunction_call(UFunction* u_function, UObject* u_obj, PyObject* 
 			if (!default_key_value.IsEmpty())
 			{
 #if ENGINE_MAJOR_VERSION == 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 17)
-				prop->ImportText(*default_key_value, prop->ContainerPtrToValuePtr<uint8>(buffer), PPF_None, NULL);
+				prop->ImportText_Direct(*default_key_value, prop->ContainerPtrToValuePtr<uint8>(buffer), nullptr, PPF_None, NULL);
 #else
 				prop->ImportText(*default_key_value, prop->ContainerPtrToValuePtr<uint8>(buffer), PPF_Localized, NULL);
 #endif
@@ -5277,7 +5277,7 @@ UFunction* unreal_engine_add_function(UClass* u_class, char* name, PyObject* py_
 					if (ucp)
 					{
 #if ENGINE_MAJOR_VERSION == 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 25)
-						UE_LOG(LogPython, Warning, TEXT("Parent FClassProperty = %p %s %p %s"), ucp->PropertyClass, *ucp->PropertyClass->GetName(), ucp->MetaClass, *ucp->MetaClass->GetName());
+						//UE_LOG(LogPython, Warning, TEXT("Parent FClassProperty = %p %s %p %s"), ucp->PropertyClass, *ucp->PropertyClass->GetName(), ucp->MetaClass.Get(), *ucp->MetaClass->GetName());
 #else
 						UE_LOG(LogPython, Warning, TEXT("Parent UClassProperty = %p %s %p %s"), ucp->PropertyClass, *ucp->PropertyClass->GetName(), ucp->MetaClass, *ucp->MetaClass->GetName());
 #endif
@@ -5309,7 +5309,7 @@ UFunction* unreal_engine_add_function(UClass* u_class, char* name, PyObject* py_
 					if (ucp)
 					{
 #if ENGINE_MAJOR_VERSION == 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 25)
-						UE_LOG(LogPython, Warning, TEXT("Function FClassProperty = %p %s %p %s"), ucp->PropertyClass, *ucp->PropertyClass->GetName(), ucp->MetaClass, *ucp->MetaClass->GetName());
+						//UE_LOG(LogPython, Warning, TEXT("Function FClassProperty = %p %s %p %s"), ucp->PropertyClass, *ucp->PropertyClass->GetName(), ucp->MetaClass.Get(), *ucp->MetaClass->GetName());
 #else
 						UE_LOG(LogPython, Warning, TEXT("Function UClassProperty = %p %s %p %s"), ucp->PropertyClass, *ucp->PropertyClass->GetName(), ucp->MetaClass, *ucp->MetaClass->GetName());
 #endif

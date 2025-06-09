@@ -8,6 +8,7 @@
 #if !(ENGINE_MAJOR_VERSION == 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 13))
 #include "ClassIconFinder.h"
 #endif
+#include <clocale> 
 
 #include "Styling/SlateStyleRegistry.h"
 #if WITH_EDITOR
@@ -111,6 +112,97 @@ bool PyUnicodeOrString_Check(PyObject *py_obj)
 #endif
 	return false;
 }
+TArray<wchar_t> TCHARToPyApiBuffer(const TCHAR* InStr)
+{
+	auto PyCharToPyBuffer = [](const wchar_t* InPyChar)
+		{
+			int32 PyCharLen = 0;
+			while (InPyChar[PyCharLen++] != 0) {} // Count includes the null terminator
+
+			TArray<wchar_t> PyBuffer;
+			PyBuffer.Append(InPyChar, PyCharLen);
+			return PyBuffer;
+		};
+
+	return PyCharToPyBuffer(TCHAR_TO_WCHAR(InStr));
+}
+
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 11
+TArray<wchar_t> FUnrealEnginePythonModule::Utf8String = TCHARToPyApiBuffer(TEXT("utf-8"));
+#endif
+struct FScopedEncodingGuard
+{
+	FScopedEncodingGuard()
+	{
+		// Python 3 changes the console mode from O_TEXT to O_BINARY which affects other uses of the console
+		// So change the console mode back to its current setting after Py_Initialize has been called
+#if PLATFORM_WINDOWS
+		// We call _setmode here to cache the current state
+		CA_SUPPRESS(6031)
+			fflush(stdin);
+		StdInMode = _setmode(_fileno(stdin), _O_TEXT);
+		CA_SUPPRESS(6031)
+			fflush(stdout);
+		StdOutMode = _setmode(_fileno(stdout), _O_TEXT);
+		CA_SUPPRESS(6031)
+			fflush(stderr);
+		StdErrMode = _setmode(_fileno(stderr), _O_TEXT);
+#endif	// PLATFORM_WINDOWS
+
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 7
+		// Python 3.7+ changes the C locale which affects functions using C string APIs
+		// So change the C locale back to its current setting after Py_Initialize has been called
+		if (const char* CurrentLocalePtr = setlocale(LC_ALL, nullptr))
+		{
+			CurrentLocale = ANSI_TO_TCHAR(CurrentLocalePtr);
+		}
+#endif	// PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 7
+	}
+
+	~FScopedEncodingGuard()
+	{
+#if PLATFORM_WINDOWS
+		// We call _setmode here to restore the previous state
+		if (StdInMode != -1)
+		{
+			CA_SUPPRESS(6031)
+				fflush(stdin);
+			CA_SUPPRESS(6031)
+				_setmode(_fileno(stdin), StdInMode);
+		}
+		if (StdOutMode != -1)
+		{
+			CA_SUPPRESS(6031)
+				fflush(stdout);
+			CA_SUPPRESS(6031)
+				_setmode(_fileno(stdout), StdOutMode);
+		}
+		if (StdErrMode != -1)
+		{
+			CA_SUPPRESS(6031)
+				fflush(stderr);
+			CA_SUPPRESS(6031)
+				_setmode(_fileno(stderr), StdErrMode);
+		}
+#endif	// PLATFORM_WINDOWS
+
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 7
+		// We call setlocale here to restore the previous state
+		if (!CurrentLocale.IsEmpty())
+		{
+			setlocale(LC_ALL, TCHAR_TO_ANSI(*CurrentLocale));
+		}
+#endif	// PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 7
+	}
+
+private:
+	FString CurrentLocale;
+#if PLATFORM_WINDOWS
+	int StdErrMode = -1;
+	int StdOutMode = -1;
+	int StdInMode = -1;
+#endif	// PLATFORM_WINDOWS
+};
 
 #define LOCTEXT_NAMESPACE "FUnrealEnginePythonModule"
 
@@ -267,17 +359,6 @@ void FUnrealEnginePythonModule::StartupModule()
 #endif
 
 	BrutalFinalize = false;
-
-#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 7
-	// Python 3.7+ changes the C locale which affects functions using C string APIs
-	// So change the C locale back to its current setting after Py_Initialize has been called
-	FString CurrentLocale;
-
-	if (const char* CurrentLocalePtr = setlocale(LC_ALL, nullptr))
-	{
-		CurrentLocale = ANSI_TO_TCHAR(CurrentLocalePtr);
-	}
-#endif
 
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 	FString PythonHome;
@@ -561,23 +642,76 @@ void FUnrealEnginePythonModule::StartupModule()
 #endif
 #endif
 
-#if PLATFORM_IOS || PLATFORM_ANDROID
-    Py_NoSiteFlag = 1;
-    Py_NoUserSiteDirectory = 1;
-    
-    Py_InitializeEx(0);
+
+	// Set-up the correct program name
+	{
+		FString ProgramName = FPlatformProcess::GetCurrentWorkingDirectory() / FPlatformProcess::ExecutableName(false);
+		FPaths::NormalizeFilename(ProgramName);
+		PyProgramName = TCHARToPyApiBuffer(*ProgramName);
+	}
+
+	// Set-up the correct home path
+	{
+		// Build the full Python directory (UE_PYTHON_DIR may be relative to the engine directory for portability)
+		FString PythonDir = UTF8_TO_TCHAR(UE_PYTHON_DIR);
+		PythonDir.ReplaceInline(TEXT("{ENGINE_DIR}"), *FPaths::EngineDir(), ESearchCase::CaseSensitive);
+		FPaths::NormalizeDirectoryName(PythonDir);
+		FPaths::RemoveDuplicateSlashes(PythonDir);
+		PyHomePath = TCHARToPyApiBuffer(*PythonDir);
+	}
+
+	// Initialize the Python interpreter
+	{
+		static_assert(PY_MAJOR_VERSION >= 3, "Unreal Engine Python integration doesn't support versions prior to Python 3.x");
+		UE_LOG(LogPython, Log, TEXT("Using Python %d.%d.%d"), PY_MAJOR_VERSION, PY_MINOR_VERSION, PY_MICRO_VERSION);
+
+		FScopedEncodingGuard EncodingGuard;
+
+		// Check if the interpreter is should run in isolation mode.
+		int IsolatedInterpreterFlag = 1;
+
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 11
+		// Pre-initialize python with utf-8 encoding and possibly isolated mode
+		PyPreConfig PreConfig;
+		PyPreConfig_InitIsolatedConfig(&PreConfig);
+
+		PreConfig.parse_argv = 0;
+		PreConfig.utf8_mode = 1;
+		PreConfig.isolated = IsolatedInterpreterFlag;
+		PreConfig.use_environment = !IsolatedInterpreterFlag;
+
+		Py_PreInitialize(&PreConfig);
+
+		// Create empty init config
+		PyConfig_InitIsolatedConfig(&ModulePyConfig);
+		ModulePyConfig.use_environment = !IsolatedInterpreterFlag;
 #else
-	Py_Initialize();
+		Py_IgnoreEnvironmentFlag = IsolatedInterpreterFlag; // If not zero, ignore all PYTHON* environment variables, e.g. PYTHONPATH, PYTHONHOME, that might be set.
 #endif
 
-#if PLATFORM_WINDOWS
-	// Restore stdio state after Py_Initialize set it to O_BINARY, otherwise
-	// everything that the engine will output is going to be encoded in UTF-16.
-	// The behaviour is described here: https://bugs.python.org/issue16587
-	_setmode(_fileno(stdin), O_TEXT);
-	_setmode(_fileno(stdout), O_TEXT);
-	_setmode(_fileno(stderr), O_TEXT);
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 11
+		ModulePyConfig.isolated = IsolatedInterpreterFlag;
+		ModulePyConfig.stdio_encoding = Utf8String.GetData();
+#elif PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 4
+		Py_IsolatedFlag = IsolatedInterpreterFlag; // If not zero, sys.path contains neither the script's directory nor the user's site-packages directory.
+		Py_SetStandardStreamEncoding("utf-8", nullptr);
+#endif	// PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 4
 
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 11
+		ModulePyConfig.program_name = PyProgramName.GetData();
+		ModulePyConfig.home = PyHomePath.GetData();
+		ModulePyConfig.install_signal_handlers = 0;
+		ModulePyConfig.safe_path = 0;
+
+		Py_InitializeFromConfig(&ModulePyConfig);
+#else
+		Py_SetProgramName(PyProgramName.GetData());
+		Py_SetPythonHome(PyHomePath.GetData());
+		Py_InitializeEx(0); // 0 so Python doesn't override any signal handling
+#endif
+	}
+
+#if PLATFORM_WINDOWS
 	// Also restore the user-requested UTF-8 flag if relevant (behaviour copied
 	// from LaunchEngineLoop.cpp).
 	if (FParse::Param(FCommandLine::Get(), TEXT("UTF8Output")))
@@ -596,14 +730,6 @@ void FUnrealEnginePythonModule::StartupModule()
 #if !(ENGINE_MAJOR_VERSION == 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 13))
 	FClassIconFinder::RegisterIconSource(StyleSet.Get());
 #endif
-#endif
-
-#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 7
-	// We call setlocale here to restore the previous state
-	if (!CurrentLocale.IsEmpty())
-	{
-		setlocale(LC_ALL, TCHAR_TO_ANSI(*CurrentLocale));
-	}
 #endif
 
 	UESetupPythonInterpreter(true);
@@ -648,8 +774,9 @@ void FUnrealEnginePythonModule::StartupModule()
 		}
 	}
 
-	// release the GIL
-	PyThreadState *UEPyGlobalState = PyEval_SaveThread();
+	// Release the GIL taken by Py_Initialize now that initialization has finished, to allow other threads access to Python
+	// We have to take this again prior to calling Py_Finalize, and all other code will lock on-demand via FPyScopedGIL
+	PyMainThreadState = PyEval_SaveThread();
 }
 
 void FUnrealEnginePythonModule::ShutdownModule()
@@ -658,6 +785,10 @@ void FUnrealEnginePythonModule::ShutdownModule()
 	// we call this function before unloading the module.
 
 	UE_LOG(LogPython, Log, TEXT("Goodbye Python"));
+	// We need to restore the original GIL prior to calling Py_Finalize
+	PyEval_RestoreThread(PyMainThreadState);
+	PyMainThreadState = nullptr;
+
 	if (!BrutalFinalize)
 	{
 		PyGILState_Ensure();

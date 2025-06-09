@@ -1143,7 +1143,7 @@ PyObject *py_unreal_engine_get_assets_by_class(PyObject * self, PyObject * args)
 	TArray<FAssetData> assets;
 
 	FAssetRegistryModule& AssetRegistryModule = FModuleManager::GetModuleChecked<FAssetRegistryModule>("AssetRegistry");
-	AssetRegistryModule.Get().GetAssetsByClass(UTF8_TO_TCHAR(path), assets, recursive);
+	AssetRegistryModule.Get().GetAssetsByClass(FTopLevelAssetPath(UTF8_TO_TCHAR(path)), assets, recursive);
 
 	PyObject *assets_list = PyList_New(0);
 

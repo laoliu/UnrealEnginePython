@@ -196,6 +196,13 @@ public:
 	// pep8ize a string using various strategy (currently only autopep8 is supported)
 	FString Pep8ize(FString Code);
 
+	PyThreadState* PyMainThreadState = nullptr;
+	TArray<wchar_t> PyProgramName;
+	TArray<wchar_t> PyHomePath;
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 11
+	PyConfig ModulePyConfig;
+	static TArray<wchar_t> Utf8String;
+#endif // 3.11 upgrade
 private:
 	void *ue_python_gil;
 	// used by console

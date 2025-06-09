@@ -1,4 +1,5 @@
-#include "UEPyAnimSequence.h"
+#include "UEPyAnimSequence.h"// 添加 BlendSpace 头文件
+#include "Animation/BlendSpace.h"
 
 
 PyObject *py_ue_anim_get_skeleton(ue_PyUObject * self, PyObject * args)
@@ -335,16 +336,17 @@ PyObject *py_ue_get_blend_parameter(ue_PyUObject * self, PyObject * args)
 	if (!PyArg_ParseTuple(args, "i:get_blend_parameter", &index))
 		return nullptr;
 
-	UBlendSpaceBase *blend = ue_py_check_type<UBlendSpaceBase>(self);
-	if (!blend)
-		return PyErr_Format(PyExc_Exception, "UObject is not a UBlendSpaceBase.");
+	//UBlendSpaceBase *blend = ue_py_check_type<UBlendSpaceBase>(self);
+	//if (!blend)
+	//	return PyErr_Format(PyExc_Exception, "UObject is not a UBlendSpaceBase.");
 
-	if (index < 0 || index > 2)
-		return PyErr_Format(PyExc_Exception, "invalid Blend Parameter index");
+	//if (index < 0 || index > 2)
+	//	return PyErr_Format(PyExc_Exception, "invalid Blend Parameter index");
 
-	const FBlendParameter & parameter = blend->GetBlendParameter(index);
+	//const FBlendParameter & parameter = blend->GetBlendParameter(index);
 
-	return py_ue_new_owned_uscriptstruct(FBlendParameter::StaticStruct(), (uint8 *)&parameter);
+	//return py_ue_new_owned_uscriptstruct(FBlendParameter::StaticStruct(), (uint8 *)&parameter);
+	return nullptr;
 }
 
 PyObject *py_ue_set_blend_parameter(ue_PyUObject * self, PyObject * args)
@@ -356,20 +358,20 @@ PyObject *py_ue_set_blend_parameter(ue_PyUObject * self, PyObject * args)
 	if (!PyArg_ParseTuple(args, "iO:get_blend_parameter", &index, &py_blend))
 		return nullptr;
 
-	UBlendSpaceBase *blend = ue_py_check_type<UBlendSpaceBase>(self);
-	if (!blend)
-		return PyErr_Format(PyExc_Exception, "UObject is not a UBlendSpaceBase.");
+	//UBlendSpaceBase *blend = ue_py_check_type<UBlendSpaceBase>(self);
+	//if (!blend)
+	//	return PyErr_Format(PyExc_Exception, "UObject is not a UBlendSpaceBase.");
 
-	if (index < 0 || index > 2)
-		return PyErr_Format(PyExc_Exception, "invalid Blend Parameter index");
+	//if (index < 0 || index > 2)
+	//	return PyErr_Format(PyExc_Exception, "invalid Blend Parameter index");
 
-	FBlendParameter *parameter = ue_py_check_struct<FBlendParameter>(py_blend);
-	if (!parameter)
-		return PyErr_Format(PyExc_Exception, "argument is not a FBlendParameter");
+	//FBlendParameter *parameter = ue_py_check_struct<FBlendParameter>(py_blend);
+	//if (!parameter)
+	//	return PyErr_Format(PyExc_Exception, "argument is not a FBlendParameter");
 
-	const FBlendParameter & orig_parameter = blend->GetBlendParameter(index);
+	//const FBlendParameter & orig_parameter = blend->GetBlendParameter(index);
 
-	FMemory::Memcpy((uint8 *)&orig_parameter, parameter, FBlendParameter::StaticStruct()->GetStructureSize());
+	//FMemory::Memcpy((uint8 *)&orig_parameter, parameter, FBlendParameter::StaticStruct()->GetStructureSize());
 
 	Py_RETURN_NONE;
 }
