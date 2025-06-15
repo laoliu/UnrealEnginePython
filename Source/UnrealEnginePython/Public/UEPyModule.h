@@ -3,16 +3,8 @@
 #include "UnrealEnginePython.h"
 #include "PythonDelegate.h"
 #include "PythonSmartDelegate.h"
-#include "UEPyUScriptStruct.h"
 #include "PythonHouseKeeper.h"
 
-// common wrappersno
-#include "Wrappers/UEPyFVector.h"
-#include "Wrappers/UEPyFRotator.h"
-#include "Wrappers/UEPyFQuat.h"
-#include "Wrappers/UEPyFTransform.h"
-#include "Wrappers/UEPyFColor.h"
-#include "Wrappers/UEPyFLinearColor.h"
 
 // backward compatibility for UE4.20 TCHAR_TO_WCHAR
 #ifndef TCHAR_TO_WCHAR

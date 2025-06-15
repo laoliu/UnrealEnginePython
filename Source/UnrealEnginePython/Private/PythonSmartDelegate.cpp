@@ -4,7 +4,7 @@
 #include "UEPyModule.h"
 
 #if WITH_EDITOR
-#include "Slate/UEPySWindow.h"
+//#include "Slate/UEPySWindow.h"
 #endif
 
 FPythonSmartDelegate::FPythonSmartDelegate()
@@ -68,13 +68,13 @@ void FPythonSmartDelegate::PyFOnAssetPostImport(UFactory *factory, UObject *u_ob
 void FPythonSmartDelegate::PyFOnMainFrameCreationFinished(TSharedPtr<SWindow> InRootWindow, bool bIsNewProjectWindow)
 {
 	FScopePythonGIL gil;
-	PyObject *ret = PyObject_CallFunction(py_callable, (char *)"NO", py_ue_new_swidget<ue_PySWindow>(InRootWindow.ToSharedRef(), &ue_PySWindowType), bIsNewProjectWindow ? Py_True : Py_False);
+	/*PyObject *ret = PyObject_CallFunction(py_callable, (char *)"NO", py_ue_new_swidget<ue_PySWindow>(InRootWindow.ToSharedRef(), &ue_PySWindowType), bIsNewProjectWindow ? Py_True : Py_False);
 	if (!ret)
 	{
 		unreal_engine_py_log_error();
 		return;
 	}
-	Py_DECREF(ret);
+	Py_DECREF(ret);*/
 
 }
 #endif

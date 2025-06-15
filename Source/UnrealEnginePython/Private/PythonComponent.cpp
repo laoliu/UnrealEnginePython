@@ -298,10 +298,10 @@ void UPythonComponent::SetPythonAttrVector(FString attr, FVector vec)
 
 	FScopePythonGIL gil;
 
-	if (PyObject_SetAttrString(py_component_instance, TCHAR_TO_UTF8(*attr), py_ue_new_fvector(vec)) < 0)
-	{
-		UE_LOG(LogPython, Error, TEXT("Unable to set attribute %s"), *attr);
-	}
+	//if (PyObject_SetAttrString(py_component_instance, TCHAR_TO_UTF8(*attr), py_ue_new_fvector(vec)) < 0)
+	//{
+	//	UE_LOG(LogPython, Error, TEXT("Unable to set attribute %s"), *attr);
+	//}
 }
 
 void UPythonComponent::SetPythonAttrRotator(FString attr, FRotator rot)
@@ -311,7 +311,7 @@ void UPythonComponent::SetPythonAttrRotator(FString attr, FRotator rot)
 
 	FScopePythonGIL gil;
 
-	if (PyObject_SetAttrString(py_component_instance, TCHAR_TO_UTF8(*attr), py_ue_new_frotator(rot)) < 0)
+	//if (PyObject_SetAttrString(py_component_instance, TCHAR_TO_UTF8(*attr), py_ue_new_frotator(rot)) < 0)
 	{
 		UE_LOG(LogPython, Error, TEXT("Unable to set attribute %s"), *attr);
 	}

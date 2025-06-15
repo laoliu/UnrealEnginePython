@@ -39,7 +39,7 @@ namespace UnrealBuildTool.Rules
                     "LevelEditor",
                     "Projects",
                     "Engine",
-                    "UnrealEnginePython"
+                    "PythonScriptPlugin"
                 }
                 );
         }

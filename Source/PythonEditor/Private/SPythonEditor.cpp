@@ -10,10 +10,12 @@
 #include "PythonEditorStyle.h"
 #include "Runtime/Slate/Public/Widgets/Text/STextBlock.h"
 #include "Runtime/Slate/Public/Widgets/Layout/SScrollBar.h"
-#include "UnrealEnginePython.h"
+#include "IPythonScriptPlugin.h"
 
 
 #define LOCTEXT_NAMESPACE "PythonEditor"
+
+class FPythonScriptPlugin;
 
 void SPythonEditor::Construct(const FArguments& InArgs, UPythonProjectItem* InPythonProjectItem)
 {
@@ -105,20 +107,26 @@ bool SPythonEditor::CanSave() const
 void SPythonEditor::Execute() const
 {
 	Save();
-	FUnrealEnginePythonModule &PythonModule = FModuleManager::GetModuleChecked<FUnrealEnginePythonModule>("UnrealEnginePython");
 	
 	FString SelectionString = PythonEditableText->GetSelectedText().ToString();
 	if (SelectionString.Len() == 0) {
 		SelectionString = PythonEditableText->GetText().ToString();
 	}
-	PythonModule.RunString(TCHAR_TO_UTF8(*SelectionString));
+	// 以文件名方式执行
+	FPythonCommandEx PythonCommand;
+	//PythonCommand.ExecutionMode = EPythonCommandExecutionMode::ExecuteFile;
+	FString path = TEXT("G:/Projects/UEPyLib/Content/Scripts/test4.py");
+	PythonCommand.Command = FString::Printf(TEXT("%s"), *path);
+	IPythonScriptPlugin::Get()->ExecPythonCommandEx(PythonCommand);
+	//IPythonScriptPlugin::Get()->ExecPythonCommand(*SelectionString);
+	//PythonModule.RunString(TCHAR_TO_UTF8(*SelectionString));
 }
 
 #if PLATFORM_MAC
 void SPythonEditor::ExecuteInMainThread() const
 {
 	Save();
-	FUnrealEnginePythonModule &PythonModule = FModuleManager::GetModuleChecked<FUnrealEnginePythonModule>("UnrealEnginePython");
+	FUnrealEnginePythonModule &PythonModule = FModuleManager::GetModuleChecked<FUnrealEnginePythonModule>("PythonScriptPlugin");
 	
 	FString SelectionString = PythonEditableText->GetSelectedText().ToString();
 	if (SelectionString.Len() == 0) {
@@ -132,11 +140,12 @@ void SPythonEditor::ExecuteInMainThread() const
 void SPythonEditor::PEP8ize() const
 {
 	Save();
-	FUnrealEnginePythonModule &PythonModule = FModuleManager::GetModuleChecked<FUnrealEnginePythonModule>("UnrealEnginePython");
+	//FPythonScriptPlugin* PythonModule = IPythonScriptPlugin::Get();
+	//FUnrealEnginePythonModule &PythonModule = FModuleManager::GetModuleChecked<FUnrealEnginePythonModule>("PythonScriptPlugin");
 
-	FString CleanedCode = PythonModule.Pep8ize(PythonEditableText->GetText().ToString());
+	//FString CleanedCode = PythonModule.Pep8ize(PythonEditableText->GetText().ToString());
 
-	PythonEditableText->SetText(FText::FromString(CleanedCode));
+	//PythonEditableText->SetText(FText::FromString(CleanedCode));
 }
 
 
